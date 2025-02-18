@@ -15,20 +15,21 @@ export default function AudioVisualizer() {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       for (let i = 0; i < bars; i++) {
         const height = Math.random() * 50;
         const x = i * barWidth;
         const y = canvas.height - height;
-        
+
         const gradient = ctx.createLinearGradient(x, y, x, canvas.height);
-        gradient.addColorStop(0, "hsl(var(--primary))");
-        gradient.addColorStop(1, "hsl(var(--primary) / 0.3)");
-        
+        // Using explicit HSL values instead of CSS variables
+        gradient.addColorStop(0, "hsl(222.2, 47.4%, 11.2%)");
+        gradient.addColorStop(1, "hsla(222.2, 47.4%, 11.2%, 0.3)");
+
         ctx.fillStyle = gradient;
         ctx.fillRect(x, y, barWidth - 2, height);
       }
-      
+
       requestAnimationFrame(animate);
     };
 
