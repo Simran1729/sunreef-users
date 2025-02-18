@@ -51,7 +51,7 @@ export default function FileUpload({ onFilesChange, className }: FileUploadProps
           onClick={() => document.getElementById('file-upload')?.click()}
         >
           <Upload className="mr-2 h-4 w-4" />
-          Add Attachments
+          Add Media
         </Button>
         <input
           id="file-upload"

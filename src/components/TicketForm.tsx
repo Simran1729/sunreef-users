@@ -18,7 +18,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { departments, getTeamsForDepartment } from "@/lib/departments";
 import FileUpload from "./FileUpload";
 import {
@@ -49,18 +49,66 @@ export default function TicketForm() {
     },
   });
 
-  // Get available teams based on selected department
-  const availableTeams = selectedDepartment
-    ? getTeamsForDepartment(selectedDepartment)
-    : [];
+  // useEffect(() => {
+  //   if (extractedData && Object.keys(extractedData).length > 0) {
+  //     form.reset(extractedData);
+  //     setSelectedDepartment(extractedData.departmentName);
+  //     form.setValue("severity", extractedData.severity.toLowerCase());
+  //   }
+  // }, [extractedData, form]);
+  
 
-  // Update teams when department changes
+  // console.log("extracted data is : ", extractedData);
+  // const allValues = form.watch();
+
+  // useEffect(() => {
+  //   console.log("Current Form Values:", allValues);
+  // }, [allValues]);
+
+  // // Get available teams based on selected department
+  // const availableTeams = selectedDepartment
+  //   ? getTeamsForDepartment(selectedDepartment)
+  //   : [];
+
+  // console.log("teams are : ", availableTeams)
+
+  // // Update teams when department changes
+  // useEffect(() => {
+  //   if (selectedDepartment) {
+  //     form.setValue("departmentName", selectedDepartment);
+  //     form.setValue("teamName", availableTeams[0] || "");
+  //     console.log("use effect ran here:")
+  //   }
+  // }, [selectedDepartment]);
+
   useEffect(() => {
-    if (selectedDepartment) {
-      form.setValue("departmentName", selectedDepartment);
-      form.setValue("teamName", availableTeams[0] || "");
+    if (extractedData && Object.keys(extractedData).length > 0) {
+      form.reset(extractedData); // ✅ Reset form when extractedData loads
+      setSelectedDepartment(extractedData.departmentName); // ✅ Set department first
+      form.setValue("severity", extractedData.severity.toLowerCase());
     }
-  }, [selectedDepartment, form, availableTeams]);
+  }, [extractedData, form]);
+  
+  // 🟢 Compute availableTeams dynamically instead of using state
+  const availableTeams = useMemo(() => {
+    return selectedDepartment ? getTeamsForDepartment(selectedDepartment) : [];
+  }, [selectedDepartment]);
+  
+  useEffect(() => {
+    if (availableTeams.length > 0) {
+      const currentTeam = form.watch("teamName"); // Get current team name
+  
+      if (!currentTeam || !availableTeams.includes(currentTeam)) {
+        // ✅ Only update if teamName is not set OR not in availableTeams
+        const validTeam = availableTeams.includes(extractedData?.teamName ?? "")
+        ? extractedData?.teamName ?? ""
+        : availableTeams[0];
+  
+        form.setValue("teamName", validTeam);
+      }
+    }
+  }, [availableTeams, extractedData, form]);
+  
 
   const { mutate: createTicket, isPending } = useMutation({
     mutationFn: async (data: TicketFormData) => {
@@ -72,22 +120,27 @@ export default function TicketForm() {
         // Create FormData to handle file uploads
         const formData = new FormData();
 
-        // Add ticket data
-        formData.append('data', JSON.stringify({
-          ...data,
-          username: selectedUser,
-        }));
-
+        // Extract form data manually
+        formData.append("projectName", data.projectName);
+        formData.append("subject", data.subject);
+        formData.append("departmentId", data.departmentName);
+        formData.append("description", data.description);
+        formData.append("team", data.teamName);
+        formData.append("severity", data.severity);
+        formData.append("ticketCreator", selectedUser || ""); // Ensure selectedUser is included
+        formData.append("projectCode", data.projectCode);
         // Add attachments
         attachments.forEach((file, index) => {
-          formData.append(`attachment${index}`, file);
+          formData.append(`files`, file);
         });
 
+        console.log(formData);
+        console.log("Data is : ", data);
+
         // Use fetch directly for FormData
-        const response = await fetch('/api/tickets', {
+        const response = await fetch('https://voice-ticket-backend-attch.vercel.app/api/create-ticket', {
           method: 'POST',
           body: formData,
-          credentials: 'include',
         });
 
         if (!response.ok) {
@@ -104,6 +157,11 @@ export default function TicketForm() {
         title: "Success",
         description: "Ticket created successfully!",
       });
+            // Step 2: Wait 1.5 seconds before refreshing the page
+      setTimeout(() => {
+        window.open("https://desk.zoho.com/agent/sunreefyachts/all/tickets/list/all-cases", "_blank");
+        window.location.reload(); // Refresh the page
+      }, 1500); 
     },
     onError: () => {
       setProgress(0);
@@ -167,6 +225,7 @@ export default function TicketForm() {
                       value={field.value}
                       onValueChange={(value) => {
                         setSelectedDepartment(value);
+                        form.setValue("departmentName", value);
                       }}
                     >
                       <FormControl>
@@ -194,7 +253,7 @@ export default function TicketForm() {
                   <FormItem>
                     <FormLabel>Team</FormLabel>
                     <Select
-                      value={field.value}
+                      value={field.value || ""}
                       onValueChange={field.onChange}
                       disabled={!selectedDepartment}
                     >
@@ -223,7 +282,7 @@ export default function TicketForm() {
                   <FormItem>
                     <FormLabel>Severity</FormLabel>
                     <Select
-                      value={field.value}
+                      value={field.value || "medium"}
                       onValueChange={field.onChange}
                     >
                       <FormControl>
