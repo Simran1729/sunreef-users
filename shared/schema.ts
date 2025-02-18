@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, bytea } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -18,6 +18,13 @@ export const tickets = pgTable("tickets", {
   description: text("description").notNull(),
   subject: text("subject").notNull(),
 });
+
+// Attachment schema for file uploads
+export interface Attachment {
+  filename: string;
+  mimetype: string;
+  data: Buffer;
+}
 
 export const insertUserSchema = createInsertSchema(users);
 export const insertTicketSchema = createInsertSchema(tickets);

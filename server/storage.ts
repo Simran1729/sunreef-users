@@ -1,16 +1,16 @@
-import { users, tickets, type User, type InsertUser, type Ticket, type InsertTicket } from "@shared/schema";
+import { users, tickets, type User, type InsertUser, type Ticket, type InsertTicket, type Attachment } from "@shared/schema";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
-  createTicket(ticket: InsertTicket): Promise<Ticket>;
+  createTicket(ticket: InsertTicket & { attachments?: Attachment[] }): Promise<Ticket>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
-  private tickets: Map<number, Ticket>;
+  private tickets: Map<number, Ticket & { attachments?: Attachment[] }>;
   private currentUserId: number;
   private currentTicketId: number;
 
@@ -47,10 +47,10 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async createTicket(insertTicket: InsertTicket): Promise<Ticket> {
+  async createTicket(insertTicket: InsertTicket & { attachments?: Attachment[] }): Promise<Ticket> {
     const id = this.currentTicketId++;
     const ticket: Ticket = { ...insertTicket, id };
-    this.tickets.set(id, ticket);
+    this.tickets.set(id, { ...ticket, attachments: insertTicket.attachments });
     return ticket;
   }
 }

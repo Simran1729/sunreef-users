@@ -20,6 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useState, useEffect } from "react";
 import { departments, getTeamsForDepartment } from "@/lib/departments";
+import FileUpload from "./FileUpload";
 import {
   Select,
   SelectContent,
@@ -33,6 +34,7 @@ export default function TicketForm() {
   const { toast } = useToast();
   const [progress, setProgress] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
+  const [attachments, setAttachments] = useState<File[]>([]);
 
   const form = useForm<TicketFormData>({
     resolver: zodResolver(ticketFormSchema),
@@ -67,10 +69,31 @@ export default function TicketForm() {
       }, 200);
 
       try {
-        await apiRequest("POST", "/api/tickets", {
+        // Create FormData to handle file uploads
+        const formData = new FormData();
+
+        // Add ticket data
+        formData.append('data', JSON.stringify({
           ...data,
           username: selectedUser,
+        }));
+
+        // Add attachments
+        attachments.forEach((file, index) => {
+          formData.append(`attachment${index}`, file);
         });
+
+        // Use fetch directly for FormData
+        const response = await fetch('/api/tickets', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create ticket');
+        }
+
         setProgress(100);
       } finally {
         clearInterval(intervalId);
@@ -99,7 +122,13 @@ export default function TicketForm() {
           <h2 className="text-lg font-semibold">Review Ticket Details</h2>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(createTicket)} className="space-y-4">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                form.handleSubmit((data) => createTicket(data))(e);
+              }} 
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="projectName"
@@ -241,6 +270,11 @@ export default function TicketForm() {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <FileUpload 
+                onFilesChange={setAttachments}
+                className="mt-4"
               />
 
               {isPending && (
