@@ -36,12 +36,28 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
       messages: [
         {
           role: "system",
-          content: `Extract ticket information from the text and generate a concise subject line. Follow these rules:
-1. Extract: projectName, projectCode, departmentName, teamName, severity, description
+          content: `Extract ticket information from the text and generate a concise subject line. Follow these rules carefully:
+
+1. Extract ALL of these fields from the input:
+   - projectName: The name of the project
+   - projectCode: The project's code identifier
+   - departmentName: Must be one of: Planning Department, Production Department, Service Department, Engineering Department
+   - teamName: Must be a valid team for the mentioned department:
+     * Planning Department: Planning Team
+     * Production Department: Production Team 1, Production Team 2, Production Team 3
+     * Service Department: Service Team
+     * Engineering Department: ALUSS, Composite, Interior Engineering, Yacht Design, Interior Design, Yacht Design 3D Visuals, Deck outfitting, Electrical, Integrated Solutions, Machinery and Piping
+   - severity: Must be one of: Low, Medium, High, Critical
+   - description: The detailed description of the issue
+
 2. Generate a concise subject line that summarizes the description
-3. Ensure departmentName matches one of: Planning Department, Production Department, Service Department, Engineering Department
-4. Ensure teamName matches a team from the selected department
-Response must be JSON with fields: projectName, projectCode, departmentName, teamName, severity, description, subject`
+
+3. If any field is not explicitly mentioned in the input:
+   - For teamName: Leave as empty string
+   - For severity: Leave as empty string
+   - For other fields: Extract best guess from context
+
+Response must be a JSON object with these exact fields: projectName, projectCode, departmentName, teamName, severity, description, subject`
         },
         {
           role: "user",
@@ -66,8 +82,8 @@ Response must be JSON with fields: projectName, projectCode, departmentName, tea
   }
 
   // Validate team belongs to department
-  if (!department.teams.includes(extractedData.teamName)) {
-    extractedData.teamName = department.teams[0]; // Default to first team
+  if (extractedData.teamName && !department.teams.includes(extractedData.teamName)) {
+    extractedData.teamName = ""; // Clear invalid team
   }
 
   return {
