@@ -18,12 +18,21 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { departments, getTeamsForDepartment } from "@/lib/departments";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function TicketForm() {
   const { extractedData, selectedUser } = useVoice();
   const { toast } = useToast();
   const [progress, setProgress] = useState(0);
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
 
   const form = useForm<TicketFormData>({
     resolver: zodResolver(ticketFormSchema),
@@ -37,6 +46,19 @@ export default function TicketForm() {
       subject: "",
     },
   });
+
+  // Get available teams based on selected department
+  const availableTeams = selectedDepartment
+    ? getTeamsForDepartment(selectedDepartment)
+    : [];
+
+  // Update teams when department changes
+  useEffect(() => {
+    if (selectedDepartment) {
+      form.setValue("departmentName", selectedDepartment);
+      form.setValue("teamName", availableTeams[0] || "");
+    }
+  }, [selectedDepartment, form, availableTeams]);
 
   const { mutate: createTicket, isPending } = useMutation({
     mutationFn: async (data: TicketFormData) => {
@@ -75,7 +97,7 @@ export default function TicketForm() {
       <CardContent className="pt-6">
         <div className="space-y-6">
           <h2 className="text-lg font-semibold">Review Ticket Details</h2>
-          
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(createTicket)} className="space-y-4">
               <FormField
@@ -91,7 +113,7 @@ export default function TicketForm() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="projectCode"
@@ -105,63 +127,94 @@ export default function TicketForm() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="departmentName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Department Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
+                    <FormLabel>Department</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) => {
+                        setSelectedDepartment(value);
+                      }}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a department" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id}>
+                            {dept.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="teamName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Team Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
+                    <FormLabel>Team</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={!selectedDepartment}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a team" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {availableTeams.map((team) => (
+                          <SelectItem key={team} value={team}>
+                            {team}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="severity"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Severity</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select severity" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {["Low", "Medium", "High", "Critical"].map((severity) => (
+                          <SelectItem key={severity} value={severity.toLowerCase()}>
+                            {severity}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
-              <FormField
-                control={form.control}
-                name="subject"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Subject</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
+
               <FormField
                 control={form.control}
                 name="description"
@@ -176,10 +229,24 @@ export default function TicketForm() {
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subject</FormLabel>
+                    <FormControl>
+                      <Input {...field} readOnly />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {isPending && (
                 <Progress value={progress} className="mb-2" />
               )}
-              
+
               <div className="flex justify-end">
                 <Button type="submit" disabled={isPending}>
                   Generate Ticket

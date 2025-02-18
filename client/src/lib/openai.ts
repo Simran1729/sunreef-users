@@ -1,4 +1,5 @@
 import { TicketFormData } from "@shared/schema";
+import { getDepartmentByName } from "./departments";
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -35,7 +36,12 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
       messages: [
         {
           role: "system",
-          content: "Extract ticket information from the following text. Provide response as JSON with the following fields: projectName, projectCode, departmentName, teamName, severity, description, subject"
+          content: `Extract ticket information from the text and generate a concise subject line. Follow these rules:
+1. Extract: projectName, projectCode, departmentName, teamName, severity, description
+2. Generate a concise subject line that summarizes the description
+3. Ensure departmentName matches one of: Planning Department, Production Department, Service Department, Engineering Department
+4. Ensure teamName matches a team from the selected department
+Response must be JSON with fields: projectName, projectCode, departmentName, teamName, severity, description, subject`
         },
         {
           role: "user",
@@ -51,5 +57,21 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
   }
 
   const data = await response.json();
-  return JSON.parse(data.choices[0].message.content);
+  const extractedData = JSON.parse(data.choices[0].message.content);
+
+  // Get department ID
+  const department = getDepartmentByName(extractedData.departmentName);
+  if (!department) {
+    throw new Error(`Invalid department: ${extractedData.departmentName}`);
+  }
+
+  // Validate team belongs to department
+  if (!department.teams.includes(extractedData.teamName)) {
+    extractedData.teamName = department.teams[0]; // Default to first team
+  }
+
+  return {
+    ...extractedData,
+    departmentName: department.id, // Replace name with ID
+  };
 }
