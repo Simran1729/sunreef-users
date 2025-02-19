@@ -38,7 +38,7 @@ export default function VoiceRecorder() {
 
       // Create MediaRecorder with audio settings optimized for Whisper
       mediaRecorder.current = new MediaRecorder(stream, {
-        mimeType: 'audio/webm',
+        mimeType: 'audio/mp4',
       });
 
       mediaRecorder.current.ondataavailable = (e) => {
