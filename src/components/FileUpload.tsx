@@ -57,7 +57,7 @@ export default function FileUpload({ onFilesChange, className }: FileUploadProps
           id="file-upload"
           type="file"
           multiple
-          accept="image/*,video/*"
+          accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain"
           className="hidden"
           onChange={handleFileChange}
         />
