@@ -48,7 +48,7 @@ export default function VoiceRecorder() {
       };
 
       mediaRecorder.current.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/mp4' });
 
         try {
           toast({
@@ -113,7 +113,7 @@ export default function VoiceRecorder() {
         <div className="space-y-6">
           <h2 className="text-lg font-semibold">Record Voice</h2>
           <p className="text-muted-foreground">
-            Speak clearly to describe your ticket details. Include project name, code, department, team, severity, and description.
+            Speak clearly to describe your ticket details. Include Project Code, Department, Team, Severity of the issue, and Description.
           </p>
 
           <div className="flex flex-col items-center gap-4">
@@ -140,3 +140,6 @@ export default function VoiceRecorder() {
     </Card>
   );
 }
+
+
+

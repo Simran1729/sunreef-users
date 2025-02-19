@@ -39,7 +39,6 @@ export default function TicketForm() {
   const form = useForm<TicketFormData>({
     resolver: zodResolver(ticketFormSchema),
     defaultValues: extractedData || {
-      projectName: "",
       projectCode: "",
       departmentName: "",
       teamName: "",
@@ -121,7 +120,6 @@ export default function TicketForm() {
         const formData = new FormData();
 
         // Extract form data manually
-        formData.append("projectName", data.projectName);
         formData.append("subject", data.subject);
         formData.append("departmentId", data.departmentName);
         formData.append("description", data.description);
@@ -157,9 +155,7 @@ export default function TicketForm() {
         title: "Success",
         description: "Ticket created successfully!",
       });
-            // Step 2: Wait 1.5 seconds before refreshing the page
       setTimeout(() => {
-        window.open("https://desk.zoho.com/agent/sunreefyachts/all/tickets/list/all-cases", "_blank");
         window.location.reload(); // Refresh the page
       }, 1500); 
     },
@@ -187,7 +183,7 @@ export default function TicketForm() {
               }} 
               className="space-y-4"
             >
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="projectName"
                 render={({ field }) => (
@@ -199,14 +195,15 @@ export default function TicketForm() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
               <FormField
                 control={form.control}
                 name="projectCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Project Code</FormLabel>
+                    <FormLabel>Project Code <span className="text-xs text-red-500 font-normal">(Please ensure code is valid)</span>
+                       </FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -291,7 +288,7 @@ export default function TicketForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {["Low", "Medium", "High", "Critical"].map((severity) => (
+                        {["Minor", "Major", "Critical", "Show Stopper"].map((severity) => (
                           <SelectItem key={severity} value={severity.toLowerCase()}>
                             {severity}
                           </SelectItem>

@@ -10,7 +10,6 @@ export const users = pgTable("users", {
 export const tickets = pgTable("tickets", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
-  projectName: text("project_name").notNull(),
   projectCode: text("project_code").notNull(),
   departmentName: text("department_name").notNull(),
   teamName: text("team_name").notNull(),
@@ -35,7 +34,6 @@ export type User = typeof users.$inferSelect;
 export type Ticket = typeof tickets.$inferSelect;
 
 export const ticketFormSchema = z.object({
-  projectName: z.string().min(1, "Project name is required"),
   projectCode: z.string().min(1, "Project code is required"),
   departmentName: z.string().min(1, "Department name is required"),
   teamName: z.string().min(1, "Team name is required"),
