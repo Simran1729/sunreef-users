@@ -86,7 +86,7 @@ export default function UserSelect() {
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
                 <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-gray-800 to-black text-transparent bg-clip-text tracking-tight">
-                  Hey, Nicholas!
+                  Hi, Nicholas!
                 </h1>
                 <motion.p 
                   className="text-base sm:text-lg text-gray-600 font-medium"
