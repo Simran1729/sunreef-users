@@ -39,7 +39,7 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
           content: `Extract ticket information from the text and generate a concise subject line. Follow these rules carefully:
 
           1. Extract ALL of these fields from the input:
-            - projectCode: The project's code identifier (The project Codes are mostly like this : SV2342,SV4569,SV4569,SV7634, etc.)
+            - projectCode: The project's code identifier (The project Codes are mostly like this : SV2342,SV4569,SV4569,SV7634,60M40P,90A24M,100A23P etc.)
             - departmentName: Must be one of: Planning Department, Production Department, Service Department, Engineering Department
             - teamName: Must be a valid team for the mentioned department:
               * Planning Department: Planning Team

@@ -48,38 +48,6 @@ export default function TicketForm() {
     },
   });
 
-  // useEffect(() => {
-  //   if (extractedData && Object.keys(extractedData).length > 0) {
-  //     form.reset(extractedData);
-  //     setSelectedDepartment(extractedData.departmentName);
-  //     form.setValue("severity", extractedData.severity.toLowerCase());
-  //   }
-  // }, [extractedData, form]);
-  
-
-  // console.log("extracted data is : ", extractedData);
-  // const allValues = form.watch();
-
-  // useEffect(() => {
-  //   console.log("Current Form Values:", allValues);
-  // }, [allValues]);
-
-  // // Get available teams based on selected department
-  // const availableTeams = selectedDepartment
-  //   ? getTeamsForDepartment(selectedDepartment)
-  //   : [];
-
-  // console.log("teams are : ", availableTeams)
-
-  // // Update teams when department changes
-  // useEffect(() => {
-  //   if (selectedDepartment) {
-  //     form.setValue("departmentName", selectedDepartment);
-  //     form.setValue("teamName", availableTeams[0] || "");
-  //     console.log("use effect ran here:")
-  //   }
-  // }, [selectedDepartment]);
-
   useEffect(() => {
     if (extractedData && Object.keys(extractedData).length > 0) {
       form.reset(extractedData); // ✅ Reset form when extractedData loads
@@ -321,7 +289,7 @@ export default function TicketForm() {
                   <FormItem>
                     <FormLabel>Subject</FormLabel>
                     <FormControl>
-                      <Input {...field} readOnly />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
