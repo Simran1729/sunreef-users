@@ -7,7 +7,7 @@ export default function UserSelect() {
   const { setSelectedUser, setStep } = useVoice();
   
   useEffect(() => {
-    setSelectedUser("Nicholas Lapp");
+    setSelectedUser("Nicolas Lapp");
     const timer = setTimeout(() => setStep(2), 4000);
     return () => clearTimeout(timer);
   }, []);
@@ -30,7 +30,7 @@ export default function UserSelect() {
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
                 <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-gray-800 to-black text-transparent bg-clip-text tracking-tight">
-                  Hi, Nicholas!
+                  Hi, Nicolas!
                 </h1>
                 <motion.p 
                   className="text-base sm:text-lg text-gray-600 font-medium"
