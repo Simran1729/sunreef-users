@@ -368,6 +368,7 @@ export default function TicketForm() {
       severity: "",
       description: "",
       subject: "",
+      priority: "",
     },
   });
 
@@ -376,6 +377,7 @@ export default function TicketForm() {
       form.reset(extractedData); // ✅ Reset form when extractedData loads
       setSelectedDepartment(extractedData.departmentName); // ✅ Set department first
       form.setValue("severity", extractedData.severity);
+      form.setValue("priority", extractedData.priority);
     }
   }, [extractedData, form]);
   
@@ -435,15 +437,13 @@ export default function TicketForm() {
         formData.append("description", data.description);
         formData.append("team", data.teamName);
         formData.append("severity", data.severity);
+        formData.append("priority", data.priority);
         formData.append("ticketCreator", selectedUser || ""); // Ensure selectedUser is included
         formData.append("projectCode", data.projectCode);
         // Add attachments
         attachments.forEach((file, index) => {
           formData.append(`files`, file);
         });
-
-        console.log(formData);
-        console.log("Data is : ", data);
 
         // Use fetch directly for FormData
         const response = await fetch('https://sunreef.loannow.in/api/create-ticket', {
@@ -579,7 +579,7 @@ export default function TicketForm() {
                   <FormItem>
                     <FormLabel>Severity</FormLabel>
                     <Select
-                      value={field.value || "medium"}
+                      value={field.value || "Major"}
                       onValueChange={field.onChange}
                     >
                       <FormControl>
@@ -591,6 +591,34 @@ export default function TicketForm() {
                         {["Minor", "Major", "Critical", "Show Stopper"].map((severity) => (
                           <SelectItem key={severity} value={severity}>
                             {severity}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+                <FormField
+                control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem className = "hidden">
+                    <FormLabel>Priority</FormLabel>
+                    <Select
+                      value={field.value || "Medium"}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {["Low", "Medium", "High", "Critical"].map((priority) => (
+                          <SelectItem key={priority} value={priority}>
+                            {priority}
                           </SelectItem>
                         ))}
                       </SelectContent>

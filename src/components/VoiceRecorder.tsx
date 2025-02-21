@@ -293,12 +293,13 @@ export default function VoiceRecorder() {
         <div className="space-y-6">
           <h2 className="text-lg font-semibold">Record Voice</h2>
           <p className="text-muted-foreground">
-            Speak clearly to describe your ticket details. Include 
+            Please, speak clearly to describe your ticket details. Include 
             <ul className="list-disc list-inside text-muted-foreground pt-2">
             <li>Project Code</li>
             <li>Department</li>
             <li>Team</li>
             <li>Severity of the issue</li>
+            {/* <li>Priority</li> */}
             <li>Description</li>
             </ul>
           </p>

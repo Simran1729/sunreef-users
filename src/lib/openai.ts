@@ -47,7 +47,8 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
               * Service Department: Service Team
               * Engineering Department: ALUSS, Composite, Interior Engineering, Yacht Design, Interior Design, Yacht Design 3D Visuals, Deck outfitting, Electrical, Integrated Solutions, Machinery and Piping
             - severity: Must be one of: Minor, Major, Critical, Show Stopper
-            - description: The description of the issue as described in the input text.
+            - description: The description of the issue as described in the input text. Please don't chip away any details as in the given text keep the details as it is.
+            - priority: Must be one of : Low, Medium, High, Critical
 
           2.Ensure that the selected **team corresponds to the department**. If a mismatch is found, correct it based on the best available match.
           3. Generate a concise subject line that summarizes the description
@@ -60,8 +61,12 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
               * **Major:** Work is partially blocked, but operations can continue with adjustments (e.g., delayed material deliveries, minor electrical issues, software glitches in yacht management systems).
               * **Critical:** Major disruption, affecting production timelines or critical yacht components (e.g., hydraulic system malfunctions, navigation system bugs, delays in core manufacturing processes).
               * **Show Stopper:** Severe issues causing production shutdown, safety risks, or operational failures (e.g., structural integrity issues, engine failures, major leaks, loss of communication systems).
+          
+          5.Determine priority based on user input:
+          - If the user explicity mentions priority with these values : Low or Medium or High or Critical, use that value.
+          - If not mentioned explicitly infer it based on the urgency and impact of the provided issue.
 
-          Response must be a JSON object with these exact fields(make sure all fields are in response with values): projectCode, departmentName, teamName, severity, description, subject`
+          Response must be a JSON object with these exact fields(make sure all fields are in response with values): projectCode, departmentName, teamName, severity, description, subject, priority`
         },
         {
           role: "user",
@@ -85,12 +90,6 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
   if (!department) {
     throw new Error(`Invalid department: ${extractedData.departmentName}`);
   }
-
-  // // Validate team belongs to department
-  // if (extractedData.teamName && !department.teams.includes(extractedData.teamName)) {
-  //   extractedData.teamName = ""; // Clear invalid team
-  // }
-
   return {
     ...extractedData,
     departmentName: department.id, // Replace name with ID

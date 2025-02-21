@@ -16,6 +16,7 @@ export const tickets = pgTable("tickets", {
   severity: text("severity").notNull(),
   description: text("description").notNull(),
   subject: text("subject").notNull(),
+  priority: text("priority").notNull()
 });
 
 // Attachment schema for file uploads
@@ -40,6 +41,7 @@ export const ticketFormSchema = z.object({
   severity: z.string().min(1, "Severity is required"),
   description: z.string().min(1, "Description is required"),
   subject: z.string().min(1, "Subject is required"),
+  priority: z.string().min(1, "Priority is required"),
 });
 
 export type TicketFormData = z.infer<typeof ticketFormSchema>;
