@@ -446,7 +446,7 @@ export default function TicketForm() {
         console.log("Data is : ", data);
 
         // Use fetch directly for FormData
-        const response = await fetch('http://sunreef.loannow.in/api/create-ticket', {
+        const response = await fetch('https://sunreef.loannow.in/api/create-ticket', {
           method: 'POST',
           body: formData,
         });
