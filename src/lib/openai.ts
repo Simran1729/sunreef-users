@@ -39,7 +39,7 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
           content: `Extract ticket information from the text and generate a concise subject line. Follow these rules carefully:
 
           1. Extract ALL of these fields from the input:
-            - projectCode: The project's code identifier (The project Codes are mostly like this : SV2342,SV4569,SV4569,SV7634,60M40P,90A24M,100A23P etc.)
+            - projectCode: The project's code identifier (The project Codes are mostly like this : 80P33, 60A58, 70A27, 70P15, 60P13E, 60A54, 80A49, 80A48, SV8723 etc.)
             - departmentName: Must be one of: Planning Department, Production Department, Service Department, Engineering Department
             - teamName: Must be a valid team for the mentioned department:
               * Planning Department: Planning Team
@@ -61,7 +61,7 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
               * **Critical:** Major disruption, affecting production timelines or critical yacht components (e.g., hydraulic system malfunctions, navigation system bugs, delays in core manufacturing processes).
               * **Show Stopper:** Severe issues causing production shutdown, safety risks, or operational failures (e.g., structural integrity issues, engine failures, major leaks, loss of communication systems).
 
-          Response must be a JSON object with these exact fields: projectCode, departmentName, teamName, severity, description, subject`
+          Response must be a JSON object with these exact fields(make sure all fields are in response with values): projectCode, departmentName, teamName, severity, description, subject`
         },
         {
           role: "user",
