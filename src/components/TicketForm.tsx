@@ -455,6 +455,8 @@ export default function TicketForm() {
           throw new Error('Failed to create ticket');
         }
 
+        // console.log("response is : ",)
+
         // API completed successfully - set to 100%
         setProgress(100);
       } finally {

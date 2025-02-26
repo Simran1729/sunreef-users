@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import logo from '../assets/logo3.jpg';
+import logo from '../assets/logo4.png';
+import bg from '../assets/bg1.png';
 
 export default function UserSelect() {
   const { setSelectedUser, setStep } = useVoice();
@@ -18,22 +19,16 @@ export default function UserSelect() {
   };
 
   return (
-    <main className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-50 to-gray-100 p-4">
+    <main className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-zinc-50 to-gray-100 p-4 "
+    style={{
+      backgroundImage: `url(${bg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+    }}>
       <div className="w-full max-w-lg flex flex-col items-center gap-4">
-        {/* Logo positioned above the card with same width */}
-        {/* <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-lg flex justify-center"
-        >
-          <img
-            src={logo}
-            alt="App Logo"
-            className="w-full h-28 object-cover rounded-lg shadow-md "
-          />
-        </motion.div> */}
-        
+
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -53,7 +48,7 @@ export default function UserSelect() {
             <img
                         src={logo}
                         alt="App Logo"
-                        className="w-full h-28 object-contain rounded-lg border-gray-200"
+                        className="w-full h-8 object-contain rounded-lg border-gray-200 mb-8 mt-8"
                       />
                   <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-gray-800 to-black text-transparent bg-clip-text tracking-tight">
                     Hi, Nicolas!
@@ -90,7 +85,7 @@ export default function UserSelect() {
                 >
                   <Button 
                     onClick={handleContinue}
-                    className="w-full xs:w-3/4 sm:w-2/4 py-6 text-md font-medium bg-gray-900 hover:bg-gray-800 transition-all duration-300 rounded-md shadow-md flex items-center justify-center gap-2"
+                    className="w-full mb-4 xs:w-3/4 sm:w-2/4 py-6 text-md font-medium bg-gray-900 hover:bg-gray-800 transition-all duration-300 rounded-md shadow-md flex items-center justify-center gap-2"
                   >
                     Let's Get Started
                     <ArrowRight size={18} />
