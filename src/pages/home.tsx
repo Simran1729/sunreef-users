@@ -4,9 +4,10 @@ import VoiceRecorder from "@/components/VoiceRecorder";
 import TicketForm from "@/components/TicketForm";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import TicketConfirmation from "@/components/TicketConfirmation";
 
 export default function Home() {
-  const { step, setStep } = useVoice();
+  const { step, setStep,ticketId, resetJourney } = useVoice();
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,6 +34,7 @@ export default function Home() {
         {step === 1 && <UserSelect />}
         {step === 2 && <VoiceRecorder />}
         {step === 3 && <TicketForm />}
+        {step === 4 && <TicketConfirmation ticketId={ticketId} resetJourney={resetJourney} />}
       </div>
     </div>
   );

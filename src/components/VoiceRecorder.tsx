@@ -366,7 +366,7 @@ export default function VoiceRecorder() {
               <li>Department</li>
               <li>Team</li>
               <li>Severity of the issue</li>
-              {/* <li>Priority</li> */}
+              <li>Priority</li>
               <li>Description</li>
             </ul>
           </p>

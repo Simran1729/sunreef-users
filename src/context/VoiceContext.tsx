@@ -12,6 +12,9 @@ interface VoiceContextType {
   setStep: (step: number) => void;
   isRecording: boolean;
   setIsRecording: (recording: boolean) => void;
+  ticketId: string;
+  setTicketId: (id: string) => void;
+  resetJourney: () => void;
 }
 
 const VoiceContext = createContext<VoiceContextType | undefined>(undefined);
@@ -22,6 +25,14 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
   const [extractedData, setExtractedData] = useState<TicketFormData | null>(null);
   const [step, setStep] = useState(1);
   const [isRecording, setIsRecording] = useState(false);
+  const [ticketId, setTicketId] = useState("");
+
+  const resetJourney = () => {
+    setStep(1);
+    setSelectedUser("");
+    setExtractedData(null);
+    setTicketId("");
+  };
 
   return (
     <VoiceContext.Provider
@@ -36,6 +47,9 @@ export function VoiceProvider({ children }: { children: ReactNode }) {
         setStep,
         isRecording,
         setIsRecording,
+        ticketId,
+        setTicketId,
+        resetJourney,
       }}
     >
       {children}
@@ -50,3 +64,4 @@ export function useVoice() {
   }
   return context;
 }
+
