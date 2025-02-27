@@ -1,36 +1,35 @@
 {
-    "short_name": "Sunreef",
-    "name": "Voice Ticket",
-    "icons": [
-      {
-        "src": "/icons/sunreef.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "/icons/sunreef.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      },
-      {
-        "src": "/icons/sunreef.png",
-        "type": "image/png",
-        "sizes": "48x48"
-     },
-     {
-        "src": "/icons/sunreef.png",
-        "type": "image/png",
-        "sizes": "96x96"
-     },
-     {
-        "src": "/icons/sunreef.png",
-        "type": "image/png",
-        "sizes": "144x144"
-     }
-    ],
-    "start_url": ".",
-    "display": "standalone",
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff"
-  }
-  
+  "short_name": "Sunreef",
+  "name": "Voice Ticket",
+  "icons": [
+    {
+      "src": "/assets/sunreef-6d6GeyRM.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/assets/sunreef-6d6GeyRM.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/assets/sunreef-6d6GeyRM.png",
+      "type": "image/png",
+      "sizes": "48x48"
+   },
+   {
+      "src": "/assets/sunreef-6d6GeyRM.png",
+      "type": "image/png",
+      "sizes": "96x96"
+   },
+   {
+      "src": "/assets/sunreef-6d6GeyRM.png",
+      "type": "image/png",
+      "sizes": "144x144"
+   }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff"
+}
