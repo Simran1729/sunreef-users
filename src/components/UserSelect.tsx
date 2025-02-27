@@ -48,7 +48,7 @@ export default function UserSelect() {
             <img
                         src={logo}
                         alt="App Logo"
-                        className="w-full h-8 object-contain rounded-lg border-gray-200 mb-8 mt-8"
+                        className="w-full h-8 object-contain rounded-lg border-gray-200 mb-8 mt-8 pr-2"
                       />
                   <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-gray-800 to-black text-transparent bg-clip-text tracking-tight">
                     Hi, Nicolas!
