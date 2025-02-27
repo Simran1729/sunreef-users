@@ -23,12 +23,22 @@ export default function Home() {
               Back
             </Button>
           )}
-          <h1 className="text-4xl font-bold tracking-tight">
+          {/* <h1 className="text-4xl font-bold tracking-tight">
             Voice Ticket Generator
           </h1>
           <p className="text-muted-foreground mt-2">
             Create support tickets using voice commands
-          </p>
+          </p> */}
+           {step !== 1 && (
+            <>
+              <h1 className="text-4xl font-bold tracking-tight">
+                Voice Ticket Generator
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                Create support tickets using voice commands
+              </p>
+            </>
+          )}
         </div>
 
         {step === 1 && <UserSelect />}
