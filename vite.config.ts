@@ -14,16 +14,10 @@ export default defineConfig({
     react(),
     runtimeErrorOverlay(),
     themePlugin(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
       copy({
-        targets: [{ src: "public/manifest.json", dest: "dist" }], // Ensure manifest.json is copied
+        targets: [{ src: "public/manifest.json", dest: "dist" },
+          { src: "public/icons", dest: "dist" } 
+        ], // Ensure manifest.json is copied
         hook: "writeBundle",
       }),
   ],
