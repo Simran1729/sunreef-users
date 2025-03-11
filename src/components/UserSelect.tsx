@@ -219,7 +219,7 @@ export default function UserSelect() {
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:3000/get-users');
+      const response = await fetch('https://u.loannow.in/get-users');
       
       // Handle timeout
       const timeoutId = setTimeout(() => {
