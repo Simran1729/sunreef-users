@@ -229,6 +229,7 @@ export default function VoiceRecorder() {
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasRecordedOnce, setHasRecordedOnce] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -252,6 +253,15 @@ export default function VoiceRecorder() {
         },
       });
 
+      if (!stream || stream.getAudioTracks().length === 0) {
+        toast({
+          title: "No Microphone Detected",
+          description: "No microphone device found. Please connect a microphone and try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       mediaStreamRef.current = stream;
       chunksRef.current = [];
 
@@ -270,6 +280,7 @@ export default function VoiceRecorder() {
         audioBlobRef.current = audioBlob;
 
         try {
+          setIsTranscribing(true);
           toast({
             title: "Processing",
             description: "Transcribing audio...",
@@ -293,19 +304,35 @@ export default function VoiceRecorder() {
                 : "Failed to transcribe audio. Please try again.",
             variant: "destructive",
           });
+        } finally {
+          setIsTranscribing(false);
         }
       };
 
       mediaRecorder.current.start(100);
       setIsRecording(true);
-    } catch (error) {
+    }  catch (error) {
       console.error("Recording error:", error);
-      toast({
-        title: "Error",
-        description:
-          "Could not access microphone. Please check permissions and try again.",
-        variant: "destructive",
-      });
+      if (error instanceof DOMException && error.name === "NotFoundError") {
+        toast({
+          title: "No Microphone Found",
+          description: "No microphone device detected. Please connect a microphone and try again.",
+          variant: "destructive",
+        });
+      } else if (error instanceof DOMException && error.name === "NotAllowedError") {
+        toast({
+          title: "Permission Denied",
+          description: "Microphone access was denied. Please allow microphone permissions in your browser settings.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description:
+            "Could not access microphone. Please check permissions and try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -389,7 +416,7 @@ export default function VoiceRecorder() {
                 size="lg"
                 onClick={isRecording ? stopRecording : startRecording}
                 className={isRecording ? "bg-red-500 hover:bg-red-600" : ""}
-                disabled={isProcessing}
+                disabled={isProcessing || isTranscribing}
               >
                 {isRecording ? (
                   <>

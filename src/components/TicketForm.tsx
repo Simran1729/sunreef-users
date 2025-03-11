@@ -31,7 +31,7 @@ import {
 import { Loader2 } from "lucide-react";
 
 export default function TicketForm() {
-  const { extractedData, selectedUser, setStep, setTicketId  } = useVoice();
+  const { extractedData, selectedUser, setStep, setTicketId,selectedEmail} = useVoice();
   const { toast } = useToast();
   const [progress, setProgress] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
@@ -119,6 +119,7 @@ export default function TicketForm() {
         formData.append("severity", data.severity);
         formData.append("priority", data.priority);
         formData.append("ticketCreator", selectedUser || ""); // Ensure selectedUser is included
+        formData.append("ticketCreatorMail", selectedEmail || "");
         formData.append("projectCode", data.projectCode);
         // Add attachments
         attachments.forEach((file, index) => {
@@ -126,7 +127,7 @@ export default function TicketForm() {
         });
 
         // Use fetch directly for FormData
-        const response = await fetch('https://sunreef.loannow.in/api/create-ticket', {
+        const response = await fetch('http://localhost:3000/api/create-ticket', {
           method: 'POST',
           body: formData,
         });
