@@ -127,7 +127,7 @@ export default function TicketForm() {
         });
 
         // Use fetch directly for FormData
-        const response = await fetch('https://u.loannow.in/api/create-ticket', {
+        const response = await fetch('http://localhost:3000/api/create-ticket', {
           method: 'POST',
           body: formData,
         });

@@ -25,7 +25,7 @@ interface User {
   name: string;
   id: string;
   cf: {
-    cf_email_1: string;
+    cf_email: string;
   };
 }
 
@@ -79,6 +79,7 @@ export default function UserSelect() {
       }, 10000); // 10 second timeout
       
       const data = await response.json();
+      console.log("response from users : ", data);
       clearTimeout(timeoutId);
       
       if (data && data.data) {
@@ -100,7 +101,7 @@ export default function UserSelect() {
 
   const handleSelectUser = (user: User) => {
     setSelectedUser(user.name);
-    setSelectedEmail(user.cf.cf_email_1);
+    setSelectedEmail(user.cf.cf_email);
     setOpen(false);
   };
 
@@ -336,7 +337,7 @@ export default function UserSelect() {
                                             className="flex flex-col items-start py-3"
                                           >
                                             <span className="font-medium">{user.name}</span>
-                                            <span className="text-xs text-gray-500">{user.cf.cf_email_1}</span>
+                                            <span className="text-xs text-gray-500">{user.cf.cf_email}</span>
                                           </CommandItem>
                                         ))}
                                       </CommandGroup>

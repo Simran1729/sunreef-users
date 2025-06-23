@@ -2,6 +2,7 @@ import { TicketFormData } from "@shared/schema";
 import { getDepartmentByName } from "./departments";
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+console.log("thsi is api key: ", OPENAI_API_KEY);
 
 export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string }> {
   const formData = new FormData();
@@ -15,6 +16,8 @@ export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string }
     },
     body: formData,
   });
+
+  console.log("this is response from openai: ", response);
 
   if (!response.ok) {
     throw new Error("Failed to transcribe audio");
