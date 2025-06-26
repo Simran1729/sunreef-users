@@ -26,6 +26,30 @@ export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string }
   return response.json();
 }
 
+
+
+export async function translateAudio(audioBlob: Blob): Promise<{ text: string }> {
+  const formData = new FormData();
+  formData.append("file", audioBlob, "audio.wav");
+  formData.append("model", "whisper-1");
+
+  const response = await fetch("https://api.openai.com/v1/audio/translations", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: formData,
+  });
+
+  console.log("this is response from openai translation: ", response);
+
+  if (!response.ok) {
+    throw new Error("Failed to translate audio");
+  }
+
+  return response.json();
+}
+
 export async function extractTicketData(text: string): Promise<TicketFormData> {
   // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
