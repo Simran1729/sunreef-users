@@ -6,34 +6,31 @@ export interface Department {
 
 export const departments: Department[] = [
   {
-    id: "481842000003244029",
+    id: "1142108000000409029",
     name: "Planning Department",
     teams: ["Planning Team"],
   },
   {
-    id: "481842000003250467",
+    id: "1142108000000422807",
     name: "Production Department",
     teams: ["Production Team 1", "Production Team 2", "Production Team 3"],
   },
   {
-    id: "481842000003257905",
+    id: "1142108000000437582",
     name: "Service Department",
     teams: ["Service Team"],
   },
   {
-    id: "481842000003265343",
+    id: "1142108000000452357",
     name: "Engineering Department",
     teams: [
-      "ALUSS",
-      "Composite",
-      "Interior Engineering",
-      "Yacht Design",
-      "Interior Design",
-      "Yacht Design 3D Visuals",
-      "Deck outfitting",
-      "Electrical",
-      "Integrated Solutions",
-      "Machinery and Piping",
+      "Naval Architecture and Hydrodynamics",
+      "Structural Engineering",
+      "Mechanical Propulsion and Systems Engineering",
+      "Electrical and Electrical Power Systems",
+      "Interior Design and Fitout Engineering",
+      "Outfitting and Deck Systems",
+      "3D CAD / Master Modelling Cell"
     ],
   },
 ];

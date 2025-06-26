@@ -386,7 +386,7 @@ export default function VoiceRecorder() {
       <CardContent className="pt-6">
         <div className="space-y-6">
           <h2 className="text-lg font-semibold">Record Voice</h2>
-          <p className="text-muted-foreground">
+          <div className="text-muted-foreground">
             Speak clearly to describe your ticket details, including:
             <ul className="list-disc list-inside text-muted-foreground pt-2">
               <li>Project Code</li>
@@ -396,7 +396,7 @@ export default function VoiceRecorder() {
               <li>Priority</li>
               <li>Description</li>
             </ul>
-          </p>
+          </div>
 
           {transcription && (
             <div className="mt-4 p-4 bg-gray-50 rounded-md border border-gray-200">

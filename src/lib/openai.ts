@@ -48,7 +48,7 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
               * Planning Department: Planning Team
               * Production Department: Production Team 1, Production Team 2, Production Team 3
               * Service Department: Service Team
-              * Engineering Department: ALUSS, Composite, Interior Engineering, Yacht Design, Interior Design, Yacht Design 3D Visuals, Deck outfitting, Electrical, Integrated Solutions, Machinery and Piping
+              * Engineering Department: Naval Architecture and Hydrodynamics, Structural Engineering, Mechanical Propulsion and Systems Engineering, Electrical and Electrical Power Systems, Interior Design and Fitout Engineering, Outfitting and Deck Systems, 3D CAD / Master Modelling Cell
             - severity: Must be one of: Minor, Major, Critical, Show Stopper
             - description: The description of the issue as described in the input text. Please don't chip away any details as in the given text keep the details as it is.
             - priority: Must be one of : Low, Medium, High, Critical
