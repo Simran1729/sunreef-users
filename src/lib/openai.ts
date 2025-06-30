@@ -2,7 +2,6 @@ import { TicketFormData } from "@shared/schema";
 import { getDepartmentByName } from "./departments";
 
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-console.log("thsi is api key: ", OPENAI_API_KEY);
 
 export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string }> {
   const formData = new FormData();
@@ -66,7 +65,7 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
           content: `Extract ticket information from the text and generate a concise subject line. Follow these rules carefully:
 
           1. Extract ALL of these fields from the input:
-            - projectCode: The project's code identifier (The project Codes are mostly like this : 80P33, 60A58, 70A27, 70P15, 60P13E, 60A54, 80A49, 80A48, SV8723 etc.)
+            - projectCode: The project's code identifier (The project Codes are mostly like this : 80P33, 60A58, 70A27, 70P15, 60P13E, 60A54, 80A49, 80A48, SV8723 (no hyphen, spaces or any other characters besides aplhabets and numbers) etc.)
             - departmentName: Must be one of: Planning Department, Production Department, Service Department, Engineering Department
             - teamName: Must be a valid team for the mentioned department:
               * Planning Department: Planning Team
