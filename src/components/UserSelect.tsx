@@ -65,7 +65,7 @@ export default function UserSelect() {
     setError(null);
     
     try {
-      const response = await fetch('https://u.loannow.in/get-users');
+      const response = await fetch('https://sunreef-users-backend.vercel.app/get-users');
       
       // Handle timeout
       const timeoutId = setTimeout(() => {

@@ -6,21 +6,54 @@ import { cn } from "@/lib/utils";
 interface FileUploadProps {
   onFilesChange: (files: File[]) => void;
   className?: string;
+  showError?: (msg: string) => void;  // 🆕 Add this
 }
 
-export default function FileUpload({ onFilesChange, className }: FileUploadProps) {
+export default function FileUpload({ onFilesChange, className ,showError}: FileUploadProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
 
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (!e.target.files?.length) return;
+
+  //   const newFiles = Array.from(e.target.files);
+  //   setFiles([...files, ...newFiles]);
+  //   onFilesChange([...files, ...newFiles]);
+
+  //   // Generate previews for new files
+  //   newFiles.forEach(file => {
+  //     if (file.type.startsWith('image/')) {
+  //       const reader = new FileReader();
+  //       reader.onloadend = () => {
+  //         setPreviews(prev => [...prev, reader.result as string]);
+  //       };
+  //       reader.readAsDataURL(file);
+  //     } else if (file.type.startsWith('video/')) {
+  //       // For videos, we'll just show an icon
+  //       setPreviews(prev => [...prev, 'video']);
+  //     }
+  //   });
+  // };
+
+
+  const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
-
+  
     const newFiles = Array.from(e.target.files);
-    setFiles([...files, ...newFiles]);
-    onFilesChange([...files, ...newFiles]);
-
-    // Generate previews for new files
-    newFiles.forEach(file => {
+    const oversizedFiles = newFiles.filter(file => file.size > MAX_FILE_SIZE);
+    const validFiles = newFiles.filter(file => file.size <= MAX_FILE_SIZE);
+  
+    if (oversizedFiles.length > 0 && showError) {
+      showError(`Some files exceeded the 15MB limit:\n${oversizedFiles.map(f => f.name).join(", ")}`);
+    }
+  
+    const updatedFiles = [...files, ...validFiles];
+    setFiles(updatedFiles);
+    onFilesChange(updatedFiles);
+  
+    // Generate previews
+    validFiles.forEach(file => {
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -28,8 +61,9 @@ export default function FileUpload({ onFilesChange, className }: FileUploadProps
         };
         reader.readAsDataURL(file);
       } else if (file.type.startsWith('video/')) {
-        // For videos, we'll just show an icon
         setPreviews(prev => [...prev, 'video']);
+      } else {
+        setPreviews(prev => [...prev, '']);
       }
     });
   };

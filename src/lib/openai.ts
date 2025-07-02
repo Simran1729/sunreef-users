@@ -25,8 +25,6 @@ export async function transcribeAudio(audioBlob: Blob): Promise<{ text: string }
   return response.json();
 }
 
-
-
 export async function translateAudio(audioBlob: Blob): Promise<{ text: string }> {
   const formData = new FormData();
   formData.append("file", audioBlob, "audio.wav");
@@ -110,6 +108,27 @@ export async function extractTicketData(text: string): Promise<TicketFormData> {
   const data = await response.json();
   const extractedData = JSON.parse(data.choices[0].message.content);
   console.log("This is the extracted data form the audio : ", extractedData);
+
+  const getprojectCode = await fetch("https://sunreef-users-backend.vercel.app/get-projectcode", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+  }})
+  const res = await getprojectCode.json()
+  const projectCode = res.data
+ 
+  // Check if projectCode exists in the fetched project codes
+   let flag = false;
+ 
+   projectCode.forEach((item :{cf :{} , layout :{} , name : string})=>{
+    if (item.name === extractedData.projectCode) {
+      flag = true;
+    }
+   })
+ 
+   if(!flag) {
+    extractedData.projectCode = "";
+   }
 
   // Get department ID
   const department = getDepartmentByName(extractedData.departmentName);

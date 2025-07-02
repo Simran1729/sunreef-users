@@ -31,7 +31,7 @@ import {
 import { Loader2 } from "lucide-react";
 
 export default function TicketForm() {
-  const { extractedData, selectedUser, setStep, setTicketId,selectedEmail} = useVoice();
+  const { extractedData, selectedUser, setStep, setTicketId,selectedEmail,step} = useVoice();
   const { toast } = useToast();
   const [progress, setProgress] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
@@ -127,7 +127,7 @@ export default function TicketForm() {
         });
 
         // Use fetch directly for FormData
-        const response = await fetch('https://u.loannow.in/api/create-ticket', {
+        const response = await fetch('https://sunreef-users-backend.vercel.app/api/create-ticket', {
           method: 'POST',
           body: formData,
         });
@@ -198,7 +198,10 @@ export default function TicketForm() {
                 name="projectCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Project Code <span className="text-xs text-red-500 font-normal">(Please ensure code is valid)</span>
+                    <FormLabel>Project Code  {
+                      step === 3 && extractedData?.projectCode === "" &&
+                       <span className="text-xs text-red-500 font-normal">(Please ensure project number is valid)</span>
+                      }
                        </FormLabel>
                     <FormControl>
                       <Input {...field} />
@@ -353,9 +356,21 @@ export default function TicketForm() {
                 )}
               />
 
-              <FileUpload 
+              {/* <FileUpload 
                 onFilesChange={setAttachments}
                 className="mt-4"
+              /> */}
+              <FileUpload
+                onFilesChange={setAttachments}
+                className="mt-4"
+                showError={(msg) =>
+                  toast({
+                    title: "File Too Large",
+                    description: msg,
+                    variant: "destructive",
+                    duration: 4000,
+                  })
+                }
               />
 
               {isPending && (
