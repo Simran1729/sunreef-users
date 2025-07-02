@@ -433,9 +433,9 @@ interface User {
   };
 }
 const steps = [
-  { text: " 1. Open the Url on the browser" },
-  { text: "2. Click on the dots" },
-  { text: "3. Now click on Add to Home Screen" },
+  { text: "1. Open the website in your phone’s browser (like Chrome or Safari)." },
+  { text: "2. Tap the three-dot menu or share icon in the browser."},
+  { text: "3. Select ‘Add to Home Screen’ from the menu." },
 ];
 
 export default function UserSelect() {
