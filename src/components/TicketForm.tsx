@@ -28,15 +28,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Loader2, Search } from "lucide-react";
+
+interface ProjectCode {
+  cf: {};
+  layout: {};
+  name: string;
+}
 
 export default function TicketForm() {
-  const { extractedData, selectedUser, setStep, setTicketId,selectedEmail,step} = useVoice();
+  const { extractedData, selectedUser, setStep, setTicketId, selectedEmail, step } = useVoice();
   const { toast } = useToast();
   const [progress, setProgress] = useState(0);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const [apiProcessing, setApiProcessing] = useState(false);
+  
+  // Project Code related state
+  const [projectCodes, setProjectCodes] = useState<ProjectCode[]>([]);
+  const [projectCodesLoading, setProjectCodesLoading] = useState(false);
+  const [projectCodeSearchQuery, setProjectCodeSearchQuery] = useState("");
+  const [projectCodePopoverOpen, setProjectCodePopoverOpen] = useState(false);
+  const [selectedProjectCode, setSelectedProjectCode] = useState("");
+  
   let ticketNum;
 
   const form = useForm<TicketFormData>({
@@ -52,26 +68,68 @@ export default function TicketForm() {
     },
   });
 
+  // Fetch project codes from backend
+  const fetchProjectCodes = async () => {
+    setProjectCodesLoading(true);
+    try {
+      const response = await fetch("https://sunreef-users-backend.vercel.app/get-projectcode", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch project codes");
+      }
+      
+      const res = await response.json();
+      console.log("Project codes response:", res);
+      
+      if (res.data && Array.isArray(res.data)) {
+        setProjectCodes(res.data);
+      } else {
+        throw new Error("Invalid project codes data format");
+      }
+    } catch (error) {
+      console.error("Failed to fetch project codes:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch project codes. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setProjectCodesLoading(false);
+    }
+  };
+
+  // Load project codes on component mount
+  useEffect(() => {
+    fetchProjectCodes();
+  }, []);
+
   useEffect(() => {
     if (extractedData && Object.keys(extractedData).length > 0) {
-      form.reset(extractedData); // ✅ Reset form when extractedData loads
-      setSelectedDepartment(extractedData.departmentName); // ✅ Set department first
+      form.reset(extractedData);
+      setSelectedDepartment(extractedData.departmentName);
       form.setValue("severity", extractedData.severity);
       form.setValue("priority", extractedData.priority);
+      
+      // Set selected project code for the dropdown
+      setSelectedProjectCode(extractedData.projectCode || "");
     }
   }, [extractedData, form]);
   
-  // 🟢 Compute availableTeams dynamically instead of using state
+  // Compute availableTeams dynamically instead of using state
   const availableTeams = useMemo(() => {
     return selectedDepartment ? getTeamsForDepartment(selectedDepartment) : [];
   }, [selectedDepartment]);
   
   useEffect(() => {
     if (availableTeams.length > 0) {
-      const currentTeam = form.watch("teamName"); // Get current team name
+      const currentTeam = form.watch("teamName");
   
       if (!currentTeam || !availableTeams.includes(currentTeam)) {
-        // ✅ Only update if teamName is not set OR not in availableTeams
         const validTeam = availableTeams.includes(extractedData?.teamName ?? "")
         ? extractedData?.teamName ?? ""
         : availableTeams[0];
@@ -80,7 +138,31 @@ export default function TicketForm() {
       }
     }
   }, [availableTeams, extractedData, form]);
-  
+
+  // Handle project code search
+  const handleProjectCodeSearchChange = (value: string) => {
+    setProjectCodeSearchQuery(value);
+    
+    if (value.trim().length > 0) {
+      setProjectCodePopoverOpen(true);
+    } else {
+      setProjectCodePopoverOpen(false);
+    }
+  };
+
+  // Handle project code selection
+  const handleSelectProjectCode = (projectCode: ProjectCode) => {
+    setSelectedProjectCode(projectCode.name);
+    form.setValue("projectCode", projectCode.name);
+    setProjectCodePopoverOpen(false);
+    setProjectCodeSearchQuery("");
+  };
+
+  // Filter project codes based on search query
+  const filteredProjectCodes = projectCodeSearchQuery.trim()
+    ? projectCodes.filter(project => 
+        project.name.toLowerCase().includes(projectCodeSearchQuery.toLowerCase()))
+    : [];
 
   const { mutate: createTicket, isPending } = useMutation({
     mutationFn: async (data: TicketFormData) => {
@@ -118,9 +200,10 @@ export default function TicketForm() {
         formData.append("team", data.teamName);
         formData.append("severity", data.severity);
         formData.append("priority", data.priority);
-        formData.append("ticketCreator", selectedUser || ""); // Ensure selectedUser is included
+        formData.append("ticketCreator", selectedUser || "");
         formData.append("ticketCreatorMail", selectedEmail || "");
         formData.append("projectCode", data.projectCode);
+        
         // Add attachments
         attachments.forEach((file, index) => {
           formData.append(`files`, file);
@@ -140,9 +223,6 @@ export default function TicketForm() {
         ticketNum = responseData.ticketNumber;
         console.log("ticketNum resp: ", ticketNum);
 
-
-        // console.log("response is : ",)
-
         // API completed successfully - set to 100%
         setTicketId(ticketNum);
         setProgress(100);
@@ -156,18 +236,14 @@ export default function TicketForm() {
       toast({
         title: "Success",
         description: "Ticket created successfully!",
-        variant : "success",
-        duration: 2000, // 2 seconds duration
+        variant: "success",
+        duration: 2000,
       });
 
       setTicketId(ticketNum);
-      setTimeout(()=>{
+      setTimeout(() => {
         setStep(4);
-      },1000);
-      
-      // setTimeout(() => {
-      //   window.location.reload(); // Refresh the page
-      // }, 2000); 
+      }, 1000);
     },
     onError: () => {
       setProgress(0);
@@ -198,13 +274,85 @@ export default function TicketForm() {
                 name="projectCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Project Code  {
-                      step === 3 && extractedData?.projectCode === "" &&
-                       <span className="text-xs text-red-500 font-normal">(Please ensure project number is valid)</span>
-                      }
-                       </FormLabel>
+                    <FormLabel>
+                      Project Code
+                      {step === 3 && extractedData?.projectCode === "" && (
+                        <span className="text-xs text-red-500 font-normal">
+                          (Please select a valid project code)
+                        </span>
+                      )}
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      {/* Show dropdown if project code is empty, otherwise show input */}
+                      {extractedData?.projectCode === "" ? (
+                        <div className="space-y-2">
+                          <Popover open={projectCodePopoverOpen} onOpenChange={setProjectCodePopoverOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={projectCodePopoverOpen}
+                                className="w-full justify-between h-12 text-left font-normal"
+                              >
+                                {selectedProjectCode ? (
+                                  <span>{selectedProjectCode}</span>
+                                ) : (
+                                  <span className="text-gray-500">Search for project code...</span>
+                                )}
+                                <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0" align="start">
+                              <Command>
+                                <CommandInput 
+                                  placeholder="Type to search project codes..."
+                                  className="h-9"
+                                  value={projectCodeSearchQuery}
+                                  onValueChange={handleProjectCodeSearchChange}
+                                  autoFocus
+                                />
+                                <CommandList>
+                                  {projectCodesLoading ? (
+                                    <div className="py-6 text-center text-sm text-gray-500">
+                                      <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
+                                      Loading project codes...
+                                    </div>
+                                  ) : projectCodeSearchQuery.trim() === "" ? (
+                                    <div className="py-6 text-center text-sm text-gray-500">
+                                      Start typing to search for project codes
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <CommandEmpty>No project codes found.</CommandEmpty>
+                                      <CommandGroup heading="Project Codes">
+                                        {filteredProjectCodes.map((project) => (
+                                          <CommandItem
+                                            key={project.name}
+                                            value={project.name}
+                                            onSelect={() => handleSelectProjectCode(project)}
+                                            className="py-3"
+                                          >
+                                            <span className="font-medium">{project.name}</span>
+                                          </CommandItem>
+                                        ))}
+                                      </CommandGroup>
+                                    </>
+                                  )}
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          
+                          {selectedProjectCode && (
+                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                              <p className="text-gray-700 font-medium text-sm">Selected Project Code:</p>
+                              <p className="text-gray-900">{selectedProjectCode}</p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Input {...field} />
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -299,11 +447,11 @@ export default function TicketForm() {
                 )}
               />
 
-                <FormField
+              <FormField
                 control={form.control}
                 name="priority"
                 render={({ field }) => (
-                  <FormItem >
+                  <FormItem>
                     <FormLabel>Priority</FormLabel>
                     <Select
                       value={field.value || "Medium"}
@@ -348,7 +496,6 @@ export default function TicketForm() {
                   <FormItem>
                     <FormLabel>Subject</FormLabel>
                     <FormControl>
-                      {/* <Input {...field} /> */}
                       <Textarea {...field} rows={2} />
                     </FormControl>
                     <FormMessage />
@@ -356,10 +503,6 @@ export default function TicketForm() {
                 )}
               />
 
-              {/* <FileUpload 
-                onFilesChange={setAttachments}
-                className="mt-4"
-              /> */}
               <FileUpload
                 onFilesChange={setAttachments}
                 className="mt-4"

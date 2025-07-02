@@ -384,7 +384,7 @@ export default function UserSelect() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </div>      
     </main>
   );
 }
