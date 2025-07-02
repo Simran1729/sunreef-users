@@ -278,7 +278,7 @@ export default function TicketForm() {
                       Project Code
                       {step === 3 && extractedData?.projectCode === "" && (
                         <span className="text-xs text-red-500 font-normal">
-                          (Please select a valid project code)
+                          (Extracted Project Code was not valid. Please select a valid one)
                         </span>
                       )}
                     </FormLabel>
