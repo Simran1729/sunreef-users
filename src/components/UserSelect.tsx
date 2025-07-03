@@ -425,6 +425,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 interface User {
   name: string;
   id: string;
@@ -485,7 +487,7 @@ export default function UserSelect() {
 
     try {
       const response = await fetch(
-        "https://sunreef-users-backend.vercel.app/get-users"
+        `${VITE_BACKEND_URL}/get-users`
       );
 
       // Handle timeout
@@ -501,7 +503,7 @@ export default function UserSelect() {
       }, 10000); // 10 second timeout
 
       const data = await response.json();
-      console.log("response from users : ", data);
+      // console.log("response from users : ", data);
       clearTimeout(timeoutId);
 
       if (data && data.data) {

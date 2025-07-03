@@ -31,6 +31,7 @@ import {
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Loader2, Search } from "lucide-react";
+const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 interface ProjectCode {
   cf: {};
@@ -72,7 +73,7 @@ export default function TicketForm() {
   const fetchProjectCodes = async () => {
     setProjectCodesLoading(true);
     try {
-      const response = await fetch("https://sunreef-users-backend.vercel.app/get-projectcode", {
+      const response = await fetch(`${VITE_BACKEND_URL}/get-projectcode`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +211,7 @@ export default function TicketForm() {
         });
 
         // Use fetch directly for FormData
-        const response = await fetch('https://sunreef-users-backend.vercel.app/api/create-ticket', {
+        const response = await fetch(`${VITE_BACKEND_URL}/api/create-ticket`, {
           method: 'POST',
           body: formData,
         });
